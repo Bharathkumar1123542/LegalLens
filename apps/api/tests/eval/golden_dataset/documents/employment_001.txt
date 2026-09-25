@@ -1,0 +1,41 @@
+EMPLOYMENT AGREEMENT
+
+This Employment Agreement ("Agreement") is entered into as of January 1, 2024, between ACME Corporation ("Company") and John Doe ("Employee").
+
+1. POSITION AND DUTIES
+Employee shall serve as Senior Software Engineer and shall perform duties as assigned by the Company's Engineering Director. Employee shall devote full-time attention and effort to the performance of these duties.
+
+2. COMPENSATION
+Company shall pay Employee a base salary of $120,000 per year, payable in accordance with Company's standard payroll practices. Employee shall be eligible for annual performance bonuses at Company's discretion.
+
+3. BENEFITS
+Employee shall be eligible to participate in all employee benefit plans maintained by Company, including health insurance, retirement plans, and paid time off, subject to the terms of such plans.
+
+4. CONFIDENTIALITY
+Employee agrees to maintain confidentiality of all proprietary information, trade secrets, and confidential business information of Company. This obligation shall survive termination of employment for a period of three (3) years.
+
+5. INTELLECTUAL PROPERTY
+All inventions, discoveries, and works created by Employee during employment shall be the sole property of Company. Employee hereby assigns all rights, title, and interest in such works to Company.
+
+6. NON-COMPETE
+During employment and for twelve (12) months following termination, Employee shall not directly or indirectly engage in any business that competes with Company's business within a fifty (50) mile radius of Company's offices.
+
+7. TERMINATION
+Either party may terminate this Agreement with thirty (30) days written notice. Company may terminate immediately for cause, including but not limited to gross misconduct, material breach of this Agreement, or violation of Company policies.
+
+8. SEVERANCE
+If Company terminates Employee without cause, Company shall pay Employee severance equal to two (2) weeks of base salary for each year of service, with a minimum of four (4) weeks.
+
+9. DISPUTE RESOLUTION
+Any dispute arising under this Agreement shall be resolved through binding arbitration in accordance with the rules of the American Arbitration Association. The prevailing party shall be entitled to recover reasonable attorney's fees.
+
+10. GOVERNING LAW
+This Agreement shall be governed by the laws of the State of California without regard to its conflict of law provisions.
+
+11. ENTIRE AGREEMENT
+This Agreement constitutes the entire agreement between the parties and supersedes all prior agreements, whether written or oral.
+
+IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first written above.
+
+COMPANY: ACME Corporation
+EMPLOYEE: John Doe

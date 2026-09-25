@@ -1,0 +1,121 @@
+{
+  "doc_id": "nda_001",
+  "doc_type": "nda_mutual",
+  "filename": "nda_001.txt",
+  "metadata": {
+    "jurisdiction": "Delaware",
+    "year": 2024,
+    "complexity": "low",
+    "page_count": 2,
+    "word_count": 485
+  },
+  "clauses": [
+    {
+      "clause_id": "c1",
+      "clause_type": "confidentiality",
+      "text_excerpt": "Confidential Information means any information disclosed by one Party to the other Party, whether orally, in writing, or in electronic form, that is designated as confidential or that reasonably should be understood to be confidential given the nature of the information and circumstances of disclosure.",
+      "start_char": 420,
+      "end_char": 710,
+      "risk_level": "low",
+      "risk_rationale": "Standard definition of confidential information with reasonable scope.",
+      "legal_significance": "Balanced definition protects both marked and obviously confidential information."
+    },
+    {
+      "clause_id": "c2",
+      "clause_type": "confidentiality",
+      "text_excerpt": "The Receiving Party shall: (a) Hold and maintain the Confidential Information in strict confidence; (b) Not disclose the Confidential Information to any third parties without prior written consent; (c) Not use the Confidential Information for any purpose other than evaluating the potential business relationship; (d) Limit access to employees and consultants who have a legitimate need to know.",
+      "start_char": 920,
+      "end_char": 1315,
+      "risk_level": "low",
+      "risk_rationale": "Standard confidentiality obligations with clear restrictions on use and disclosure.",
+      "legal_significance": "Typical mutual NDA obligations protecting both parties equally."
+    },
+    {
+      "clause_id": "c3",
+      "clause_type": "confidentiality",
+      "text_excerpt": "Confidential Information shall not include information that: (a) Was publicly known at the time of disclosure or becomes publicly known through no breach of this Agreement; (b) Was rightfully in the Receiving Party's possession prior to disclosure; (c) Is independently developed without use of the Confidential Information; (d) Is rightfully received from a third party without breach of any confidentiality obligation.",
+      "start_char": 1325,
+      "end_char": 1745,
+      "risk_level": "low",
+      "risk_rationale": "Standard carve-outs for information that should not be protected.",
+      "legal_significance": "Necessary exclusions that courts typically recognize."
+    },
+    {
+      "clause_id": "c4",
+      "clause_type": "term_duration",
+      "text_excerpt": "This Agreement shall commence on the date first written above and shall continue for a period of two (2) years. The obligations regarding Confidential Information shall survive for an additional three (3) years following termination or expiration of this Agreement.",
+      "start_char": 1755,
+      "end_char": 2015,
+      "risk_level": "medium",
+      "risk_rationale": "Total 5-year confidentiality period (2-year term + 3-year survival) is longer than typical 3-year total.",
+      "legal_significance": "Extended confidentiality obligation may be appropriate for highly sensitive information but limits future flexibility."
+    },
+    {
+      "clause_id": "c5",
+      "clause_type": "return_of_materials",
+      "text_excerpt": "Upon request or termination of this Agreement, each Party shall promptly return or destroy all Confidential Information received from the other Party, including all copies, notes, and derivatives thereof.",
+      "start_char": 2025,
+      "end_char": 2225,
+      "risk_level": "low",
+      "risk_rationale": "Standard return or destruction requirement for confidential materials.",
+      "legal_significance": "Common provision ensuring confidential information does not remain accessible after termination."
+    },
+    {
+      "clause_id": "c6",
+      "clause_type": "intellectual_property",
+      "text_excerpt": "Nothing in this Agreement shall be construed as granting any license or right to either Party under any patent, copyright, trademark, or other intellectual property right.",
+      "start_char": 2235,
+      "end_char": 2405,
+      "risk_level": "low",
+      "risk_rationale": "Clarifies that sharing information does not grant IP rights, which is standard protection.",
+      "legal_significance": "Important clarification preventing implied licenses from information disclosure."
+    },
+    {
+      "clause_id": "c7",
+      "clause_type": "remedies",
+      "text_excerpt": "The Parties acknowledge that monetary damages may not be adequate remedy for breach of this Agreement and that the non-breaching Party shall be entitled to seek equitable relief, including injunction and specific performance.",
+      "start_char": 2415,
+      "end_char": 2635,
+      "risk_level": "low",
+      "risk_rationale": "Standard remedies clause allowing injunctive relief for breaches.",
+      "legal_significance": "Enables party to obtain court orders to stop ongoing breaches, which is critical for NDA enforcement."
+    }
+  ],
+  "simplifications": [
+    {
+      "reading_level": "8th_grade",
+      "expected_grade": 8.0,
+      "simplified_text": "This is a mutual agreement where both TechStart Inc. and InnovateCorp LLC agree to keep each other's secrets. Confidential information includes business plans, customer lists, and trade secrets. Neither company can share this information with others or use it except to explore working together. The agreement lasts 2 years, but the duty to keep secrets continues for 3 more years after that. If one company breaks the agreement, the other can go to court to stop them. Both companies must return or destroy all confidential materials when the agreement ends.",
+      "key_terms": ["mutual agreement", "confidential information", "2 years", "3 years after", "return materials"],
+      "citations": [
+        {"original": "two (2) years", "location": "Section 4"},
+        {"original": "three (3) years following termination", "location": "Section 4"},
+        {"original": "return or destroy", "location": "Section 5"}
+      ]
+    }
+  ],
+  "chat_qa_pairs": [
+    {
+      "question": "How long does this NDA last?",
+      "expected_answer": "The NDA term is 2 years, but the confidentiality obligations continue for an additional 3 years after termination, for a total of 5 years of confidentiality protection.",
+      "answer_must_include": ["2 years", "3 years", "total", "5 years"],
+      "supporting_excerpts": ["This Agreement shall commence on the date first written above and shall continue for a period of two (2) years. The obligations regarding Confidential Information shall survive for an additional three (3) years following termination"],
+      "difficulty": "easy"
+    },
+    {
+      "question": "Can I share confidential information with my employees?",
+      "expected_answer": "Yes, you can share with employees and consultants who have a legitimate need to know and who have been informed of the confidential nature of the information.",
+      "answer_must_include": ["employees", "consultants", "need to know", "informed"],
+      "supporting_excerpts": ["Limit access to the Confidential Information to employees and consultants who have a legitimate need to know and who have been informed of the confidential nature of such information."],
+      "difficulty": "medium"
+    },
+    {
+      "question": "What happens if publicly available information is shared?",
+      "expected_answer": "Information that was publicly known at the time of disclosure or becomes publicly known through no breach of the agreement is not considered confidential and is excluded from the NDA obligations.",
+      "answer_must_include": ["publicly known", "excluded", "not confidential"],
+      "supporting_excerpts": ["Confidential Information shall not include information that: (a) Was publicly known at the time of disclosure or becomes publicly known through no breach of this Agreement"],
+      "difficulty": "medium"
+    }
+  ],
+  "comparison_ground_truth": []
+}

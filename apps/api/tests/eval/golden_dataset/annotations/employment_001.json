@@ -1,0 +1,146 @@
+{
+  "doc_id": "employment_001",
+  "doc_type": "employment_agreement",
+  "filename": "employment_001.txt",
+  "metadata": {
+    "jurisdiction": "California",
+    "year": 2024,
+    "complexity": "medium",
+    "page_count": 2,
+    "word_count": 520
+  },
+  "clauses": [
+    {
+      "clause_id": "c1",
+      "clause_type": "payment_terms",
+      "text_excerpt": "Company shall pay Employee a base salary of $120,000 per year, payable in accordance with Company's standard payroll practices.",
+      "start_char": 350,
+      "end_char": 475,
+      "risk_level": "low",
+      "risk_rationale": "Clear payment terms with standard market salary for senior engineer role.",
+      "legal_significance": "Standard compensation clause with no unusual provisions."
+    },
+    {
+      "clause_id": "c2",
+      "clause_type": "confidentiality",
+      "text_excerpt": "Employee agrees to maintain confidentiality of all proprietary information, trade secrets, and confidential business information of Company. This obligation shall survive termination of employment for a period of three (3) years.",
+      "start_char": 750,
+      "end_char": 975,
+      "risk_level": "medium",
+      "risk_rationale": "Three-year post-termination confidentiality period is longer than typical one-year standard.",
+      "legal_significance": "Extended confidentiality obligation may limit future employment opportunities."
+    },
+    {
+      "clause_id": "c3",
+      "clause_type": "intellectual_property",
+      "text_excerpt": "All inventions, discoveries, and works created by Employee during employment shall be the sole property of Company. Employee hereby assigns all rights, title, and interest in such works to Company.",
+      "start_char": 980,
+      "end_char": 1175,
+      "risk_level": "medium",
+      "risk_rationale": "Broad IP assignment covers all work during employment, potentially including personal projects.",
+      "legal_significance": "May require negotiation to exclude personal projects done on own time."
+    },
+    {
+      "clause_id": "c4",
+      "clause_type": "non_compete",
+      "text_excerpt": "During employment and for twelve (12) months following termination, Employee shall not directly or indirectly engage in any business that competes with Company's business within a fifty (50) mile radius of Company's offices.",
+      "start_char": 1180,
+      "end_char": 1405,
+      "risk_level": "high",
+      "risk_rationale": "12-month non-compete with 50-mile radius significantly restricts future employment options. May not be enforceable in California.",
+      "legal_significance": "California generally prohibits non-compete agreements except in limited circumstances (Business & Professions Code § 16600)."
+    },
+    {
+      "clause_id": "c5",
+      "clause_type": "termination",
+      "text_excerpt": "Either party may terminate this Agreement with thirty (30) days written notice. Company may terminate immediately for cause, including but not limited to gross misconduct, material breach of this Agreement, or violation of Company policies.",
+      "start_char": 1410,
+      "end_char": 1650,
+      "risk_level": "medium",
+      "risk_rationale": "30-day notice period is shorter than ideal. For-cause termination is immediate with broadly defined causes.",
+      "legal_significance": "Short notice period and broad termination causes favor employer."
+    },
+    {
+      "clause_id": "c6",
+      "clause_type": "severance",
+      "text_excerpt": "If Company terminates Employee without cause, Company shall pay Employee severance equal to two (2) weeks of base salary for each year of service, with a minimum of four (4) weeks.",
+      "start_char": 1655,
+      "end_char": 1835,
+      "risk_level": "low",
+      "risk_rationale": "Severance provision provides reasonable protection with minimum 4 weeks pay.",
+      "legal_significance": "Standard severance formula, favorable to have written guarantee."
+    },
+    {
+      "clause_id": "c7",
+      "clause_type": "dispute_resolution",
+      "text_excerpt": "Any dispute arising under this Agreement shall be resolved through binding arbitration in accordance with the rules of the American Arbitration Association.",
+      "start_char": 1840,
+      "end_char": 1998,
+      "risk_level": "medium",
+      "risk_rationale": "Mandatory arbitration waives right to jury trial and limits appeals.",
+      "legal_significance": "Arbitration clause standard but limits legal recourse options."
+    }
+  ],
+  "simplifications": [
+    {
+      "reading_level": "8th_grade",
+      "expected_grade": 8.0,
+      "simplified_text": "This is a job contract between ACME Corporation and John Doe. John will work as a Senior Software Engineer for $120,000 per year. He must keep company secrets confidential for 3 years after leaving. All inventions John creates at work belong to the company. John cannot work for competing companies for 12 months after quitting within 50 miles. Either side can end the contract with 30 days notice. If the company fires John without cause, he gets 2 weeks pay for each year worked (minimum 4 weeks). Any fights about the contract go to arbitration, not court.",
+      "key_terms": ["salary", "confidential", "inventions", "non-compete", "termination", "severance", "arbitration"],
+      "citations": [
+        {"original": "$120,000 per year", "location": "Section 2"},
+        {"original": "thirty (30) days written notice", "location": "Section 7"},
+        {"original": "twelve (12) months", "location": "Section 6"}
+      ]
+    }
+  ],
+  "chat_qa_pairs": [
+    {
+      "question": "How much notice do I need to give if I want to quit?",
+      "expected_answer": "You need to give 30 days written notice to terminate the employment agreement.",
+      "answer_must_include": ["30 days", "written notice"],
+      "supporting_excerpts": ["Either party may terminate this Agreement with thirty (30) days written notice."],
+      "difficulty": "easy"
+    },
+    {
+      "question": "What happens to software I create at home on weekends?",
+      "expected_answer": "All inventions and works created during employment belong to the company, which may include personal projects. This broad language could be negotiated to exclude work done on your own time with your own resources.",
+      "answer_must_include": ["belong to the company", "during employment"],
+      "supporting_excerpts": ["All inventions, discoveries, and works created by Employee during employment shall be the sole property of Company."],
+      "difficulty": "medium"
+    },
+    {
+      "question": "Can I work for a competitor after I leave?",
+      "expected_answer": "The agreement prohibits working for competitors for 12 months within a 50-mile radius. However, this non-compete may not be enforceable in California where they are generally prohibited by law.",
+      "answer_must_include": ["12 months", "50-mile", "California", "not enforceable"],
+      "supporting_excerpts": ["During employment and for twelve (12) months following termination, Employee shall not directly or indirectly engage in any business that competes with Company's business within a fifty (50) mile radius"],
+      "difficulty": "hard"
+    },
+    {
+      "question": "What severance will I get if laid off?",
+      "expected_answer": "If terminated without cause, you will receive 2 weeks of base salary for each year of service, with a minimum of 4 weeks severance.",
+      "answer_must_include": ["2 weeks", "each year", "minimum", "4 weeks"],
+      "supporting_excerpts": ["Company shall pay Employee severance equal to two (2) weeks of base salary for each year of service, with a minimum of four (4) weeks."],
+      "difficulty": "easy"
+    }
+  ],
+  "comparison_ground_truth": [
+    {
+      "compare_with_doc_id": "employment_002",
+      "expected_differences": [
+        {
+          "clause_type": "termination",
+          "diff_summary": "Document 001 requires 30 days notice while document 002 requires 60 days notice for termination.",
+          "materiality": "significant",
+          "rationale": "Longer notice period in document 002 provides more time for transition but less flexibility for employee."
+        },
+        {
+          "clause_type": "non_compete",
+          "diff_summary": "Document 001 has 12-month non-compete while document 002 has no non-compete clause.",
+          "materiality": "critical",
+          "rationale": "Non-compete in document 001 significantly restricts post-employment opportunities. Document 002 is more employee-friendly."
+        }
+      ]
+    }
+  ]
+}

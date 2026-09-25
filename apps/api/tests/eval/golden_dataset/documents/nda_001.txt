@@ -1,0 +1,44 @@
+MUTUAL NON-DISCLOSURE AGREEMENT
+
+This Mutual Non-Disclosure Agreement ("Agreement") is entered into as of March 15, 2024, between TechStart Inc. ("Company A") and InnovateCorp LLC ("Company B"), collectively referred to as the "Parties."
+
+WHEREAS, the Parties wish to explore a potential business relationship and will need to disclose certain confidential information to each other.
+
+NOW, THEREFORE, in consideration of the mutual covenants contained herein, the Parties agree as follows:
+
+1. DEFINITION OF CONFIDENTIAL INFORMATION
+"Confidential Information" means any information disclosed by one Party (the "Disclosing Party") to the other Party (the "Receiving Party"), whether orally, in writing, or in electronic form, that is designated as confidential or that reasonably should be understood to be confidential given the nature of the information and circumstances of disclosure. Confidential Information includes, but is not limited to, business plans, technical data, customer lists, financial information, product roadmaps, and trade secrets.
+
+2. OBLIGATIONS OF RECEIVING PARTY
+The Receiving Party shall:
+(a) Hold and maintain the Confidential Information in strict confidence;
+(b) Not disclose the Confidential Information to any third parties without prior written consent;
+(c) Not use the Confidential Information for any purpose other than evaluating the potential business relationship;
+(d) Limit access to the Confidential Information to employees and consultants who have a legitimate need to know and who have been informed of the confidential nature of such information.
+
+3. EXCLUSIONS
+Confidential Information shall not include information that:
+(a) Was publicly known at the time of disclosure or becomes publicly known through no breach of this Agreement;
+(b) Was rightfully in the Receiving Party's possession prior to disclosure;
+(c) Is independently developed by the Receiving Party without use of the Confidential Information;
+(d) Is rightfully received from a third party without breach of any confidentiality obligation.
+
+4. TERM
+This Agreement shall commence on the date first written above and shall continue for a period of two (2) years. The obligations regarding Confidential Information shall survive for an additional three (3) years following termination or expiration of this Agreement.
+
+5. RETURN OF MATERIALS
+Upon request or termination of this Agreement, each Party shall promptly return or destroy all Confidential Information received from the other Party, including all copies, notes, and derivatives thereof.
+
+6. NO LICENSE
+Nothing in this Agreement shall be construed as granting any license or right to either Party under any patent, copyright, trademark, or other intellectual property right.
+
+7. REMEDIES
+The Parties acknowledge that monetary damages may not be adequate remedy for breach of this Agreement and that the non-breaching Party shall be entitled to seek equitable relief, including injunction and specific performance.
+
+8. GOVERNING LAW
+This Agreement shall be governed by the laws of the State of Delaware without regard to its conflict of law principles.
+
+IN WITNESS WHEREOF, the Parties have executed this Agreement as of the date first written above.
+
+COMPANY A: TechStart Inc.
+COMPANY B: InnovateCorp LLC

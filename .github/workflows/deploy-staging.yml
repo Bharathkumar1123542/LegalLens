@@ -1,0 +1,378 @@
+# LegalLens Staging Deployment — Phase 8
+# Automatically deploys to staging environment on merge to main
+# Includes smoke tests and health checks
+
+name: Deploy to Staging
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:  # Allow manual trigger
+
+# Prevent concurrent deployments
+concurrency:
+  group: staging-deployment
+  cancel-in-progress: false
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION: us-central1
+  SERVICE_NAME: legallens-api-staging
+  IMAGE_NAME: legallens-api
+  REGISTRY: gcr.io
+
+jobs:
+  # ── Build and push Docker images ───────────────────────────────────────────
+  build:
+    name: Build Docker Images
+    runs-on: ubuntu-latest
+    
+    outputs:
+      api-image: ${{ steps.meta.outputs.api-image }}
+      web-image: ${{ steps.meta.outputs.web-image }}
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          export_default_credentials: true
+      
+      - name: Configure Docker for GCR
+        run: |
+          gcloud auth configure-docker gcr.io
+      
+      - name: Set image tags
+        id: meta
+        run: |
+          SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+          API_IMAGE="${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${SHORT_SHA}"
+          WEB_IMAGE="${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/legallens-web:${SHORT_SHA}"
+          
+          echo "api-image=${API_IMAGE}" >> $GITHUB_OUTPUT
+          echo "web-image=${WEB_IMAGE}" >> $GITHUB_OUTPUT
+          
+          echo "Building images:"
+          echo "  API: ${API_IMAGE}"
+          echo "  Web: ${WEB_IMAGE}"
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Build and push API image
+        uses: docker/build-push-action@v5
+        with:
+          context: apps/api
+          file: apps/api/Dockerfile
+          push: true
+          tags: |
+            ${{ steps.meta.outputs.api-image }}
+            ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:staging-latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            BUILDKIT_INLINE_CACHE=1
+      
+      - name: Build and push Web image
+        uses: docker/build-push-action@v5
+        with:
+          context: apps/web
+          file: apps/web/Dockerfile
+          push: true
+          tags: |
+            ${{ steps.meta.outputs.web-image }}
+            ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/legallens-web:staging-latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            NEXT_PUBLIC_API_URL=https://api-staging.legallens.com
+
+  # ── Run database migrations ────────────────────────────────────────────────
+  migrate:
+    name: Run Database Migrations
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      
+      - name: Install dependencies
+        working-directory: apps/api
+        run: |
+          pip install alembic asyncpg psycopg2-binary sqlalchemy
+      
+      - name: Run migrations
+        working-directory: apps/api
+        env:
+          DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
+        run: |
+          echo "Running Alembic migrations..."
+          alembic upgrade head
+          echo "Migrations completed successfully"
+      
+      - name: Verify migration
+        working-directory: apps/api
+        env:
+          DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
+        run: |
+          echo "Verifying current revision..."
+          alembic current
+
+  # ── Deploy to Cloud Run ────────────────────────────────────────────────────
+  deploy-api:
+    name: Deploy API to Cloud Run
+    runs-on: ubuntu-latest
+    needs: [build, migrate]
+    
+    outputs:
+      url: ${{ steps.deploy.outputs.url }}
+    
+    steps:
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+      
+      - name: Deploy to Cloud Run
+        id: deploy
+        run: |
+          gcloud run deploy ${{ env.SERVICE_NAME }} \
+            --image=${{ needs.build.outputs.api-image }} \
+            --region=${{ env.REGION }} \
+            --platform=managed \
+            --allow-unauthenticated \
+            --port=8000 \
+            --memory=2Gi \
+            --cpu=2 \
+            --min-instances=1 \
+            --max-instances=10 \
+            --timeout=300 \
+            --set-env-vars="ENVIRONMENT=staging" \
+            --set-secrets="DATABASE_URL=staging-database-url:latest" \
+            --set-secrets="JWT_SECRET=staging-jwt-secret:latest" \
+            --set-secrets="ANTHROPIC_API_KEY=anthropic-api-key:latest" \
+            --set-secrets="VOYAGE_API_KEY=voyage-api-key:latest" \
+            --set-secrets="S3_ACCESS_KEY_ID=s3-access-key:latest" \
+            --set-secrets="S3_SECRET_ACCESS_KEY=s3-secret-key:latest" \
+            --set-env-vars="REDIS_URL=${{ secrets.STAGING_REDIS_URL }}" \
+            --set-env-vars="CELERY_BROKER_URL=${{ secrets.STAGING_REDIS_URL }}" \
+            --set-env-vars="S3_BUCKET=legallens-staging" \
+            --set-env-vars="S3_ENDPOINT_URL=" \
+            --set-env-vars="CORS_ORIGINS=https://staging.legallens.com" \
+            --set-env-vars="LOG_LEVEL=INFO" \
+            --set-env-vars="SENTRY_DSN=${{ secrets.SENTRY_DSN }}" \
+            --service-account=${{ secrets.STAGING_SERVICE_ACCOUNT }} \
+            --format=json > deploy-output.json
+          
+          URL=$(jq -r '.[0].status.url' deploy-output.json)
+          echo "url=${URL}" >> $GITHUB_OUTPUT
+          echo "Deployed to: ${URL}"
+      
+      - name: Wait for deployment
+        run: |
+          echo "Waiting for deployment to stabilize..."
+          sleep 30
+
+  deploy-web:
+    name: Deploy Web to Cloud Run
+    runs-on: ubuntu-latest
+    needs: [build, deploy-api]
+    
+    steps:
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+      
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy legallens-web-staging \
+            --image=${{ needs.build.outputs.web-image }} \
+            --region=${{ env.REGION }} \
+            --platform=managed \
+            --allow-unauthenticated \
+            --port=3000 \
+            --memory=1Gi \
+            --cpu=1 \
+            --min-instances=1 \
+            --max-instances=5 \
+            --timeout=60 \
+            --set-env-vars="NEXT_PUBLIC_API_URL=${{ needs.deploy-api.outputs.url }}" \
+            --service-account=${{ secrets.STAGING_SERVICE_ACCOUNT }}
+
+  # ── Run smoke tests ────────────────────────────────────────────────────────
+  smoke-tests:
+    name: Run Smoke Tests
+    runs-on: ubuntu-latest
+    needs: [deploy-api, deploy-web]
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Health check
+        run: |
+          echo "Testing API health endpoint..."
+          response=$(curl -s -o /dev/null -w "%{http_code}" ${{ needs.deploy-api.outputs.url }}/health)
+          
+          if [ "$response" -eq 200 ]; then
+            echo "✅ Health check passed (HTTP $response)"
+          else
+            echo "❌ Health check failed (HTTP $response)"
+            exit 1
+          fi
+      
+      - name: Test authentication endpoint
+        run: |
+          echo "Testing auth registration..."
+          response=$(curl -s -w "\n%{http_code}" \
+            -X POST \
+            -H "Content-Type: application/json" \
+            -d '{"email":"test-'$(date +%s)'@example.com","password":"TestPass123!","full_name":"Test User"}' \
+            ${{ needs.deploy-api.outputs.url }}/api/v1/auth/register)
+          
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | head -n-1)
+          
+          if [ "$http_code" -eq 201 ]; then
+            echo "✅ Registration test passed"
+            echo "Response: $body"
+          else
+            echo "❌ Registration test failed (HTTP $http_code)"
+            echo "Response: $body"
+            exit 1
+          fi
+      
+      - name: Test rate limiting
+        run: |
+          echo "Testing rate limiter..."
+          # Should succeed
+          curl -s -o /dev/null -w "%{http_code}\n" \
+            ${{ needs.deploy-api.outputs.url }}/health
+          
+          # Headers should include rate limit info
+          headers=$(curl -s -I ${{ needs.deploy-api.outputs.url }}/health)
+          
+          if echo "$headers" | grep -q "X-RateLimit-Limit"; then
+            echo "✅ Rate limiting headers present"
+          else
+            echo "⚠️  Rate limiting headers not found (may not be critical)"
+          fi
+      
+      - name: Test CORS headers
+        run: |
+          echo "Testing CORS configuration..."
+          response=$(curl -s -I \
+            -H "Origin: https://staging.legallens.com" \
+            ${{ needs.deploy-api.outputs.url }}/health)
+          
+          if echo "$response" | grep -q "Access-Control-Allow-Origin"; then
+            echo "✅ CORS headers present"
+          else
+            echo "❌ CORS headers missing"
+            exit 1
+          fi
+
+  # ── Rollback on failure ────────────────────────────────────────────────────
+  rollback:
+    name: Rollback on Failure
+    runs-on: ubuntu-latest
+    needs: [deploy-api, smoke-tests]
+    if: failure()
+    
+    steps:
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+      
+      - name: Get previous revision
+        id: previous
+        run: |
+          echo "Getting previous stable revision..."
+          revisions=$(gcloud run revisions list \
+            --service=${{ env.SERVICE_NAME }} \
+            --region=${{ env.REGION }} \
+            --platform=managed \
+            --format="value(name)" \
+            --limit=5)
+          
+          # Get second revision (first is the failing one)
+          previous_revision=$(echo "$revisions" | sed -n '2p')
+          echo "previous-revision=${previous_revision}" >> $GITHUB_OUTPUT
+          echo "Previous stable revision: ${previous_revision}"
+      
+      - name: Rollback to previous revision
+        run: |
+          echo "Rolling back to ${{ steps.previous.outputs.previous-revision }}..."
+          gcloud run services update-traffic ${{ env.SERVICE_NAME }} \
+            --region=${{ env.REGION }} \
+            --to-revisions=${{ steps.previous.outputs.previous-revision }}=100
+          
+          echo "✅ Rollback completed"
+      
+      - name: Notify rollback
+        run: |
+          echo "🔄 Deployment failed and was rolled back"
+          echo "Failed commit: ${{ github.sha }}"
+          echo "Rolled back to: ${{ steps.previous.outputs.previous-revision }}"
+
+  # ── Notify deployment status ───────────────────────────────────────────────
+  notify:
+    name: Notify Deployment Status
+    runs-on: ubuntu-latest
+    needs: [deploy-api, deploy-web, smoke-tests]
+    if: always()
+    
+    steps:
+      - name: Deployment success
+        if: needs.smoke-tests.result == 'success'
+        run: |
+          echo "🎉 Staging deployment successful!"
+          echo "API URL: ${{ needs.deploy-api.outputs.url }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Triggered by: ${{ github.actor }}"
+      
+      - name: Deployment failure
+        if: needs.smoke-tests.result != 'success'
+        run: |
+          echo "❌ Staging deployment failed"
+          echo "Check logs for details"
+          exit 1
+      
+      # Optional: Send Slack notification
+      - name: Send Slack notification
+        if: always() && secrets.SLACK_WEBHOOK != ''
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": "${{ needs.smoke-tests.result == 'success' && '✅ Staging deployment successful' || '❌ Staging deployment failed' }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Staging Deployment*\nStatus: ${{ needs.smoke-tests.result }}\nCommit: `${{ github.sha }}`\nActor: ${{ github.actor }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
