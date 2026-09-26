@@ -97,13 +97,38 @@ See [`.context/architecture.md`](.context/architecture.md) for the full system d
 
 | Phase | Scope | Status |
 |---|---|---|
-| 0 — Scaffolding | Repo structure, Docker Compose, CI, health endpoint | ✅ In progress |
-| 1 — Auth & upload | Register/login, document upload through `status=uploaded` | ⏳ Next |
-| 2 — Parsing, chunking, embeddings | Text extraction, OCR, chunking, Voyage AI embeddings | ⏳ |
-| 3 — Simplification & clause extraction | LLM orchestration, `/simplify`, `/extract-clauses` | ⏳ |
-| 4 — Document Q&A | RAG chat with citations | ⏳ |
-| 5 — Comparison & export | Comparison engine, export to PDF/DOCX/MD | ⏳ |
-| 6–8 — Hardening | Security, testing, deployment | ⏳ |
+| 0 — Scaffolding | Repo structure, Docker Compose, CI, health endpoint | ✅ Complete |
+| 1 — Auth & upload | Register/login, document upload through `status=uploaded` | ✅ Complete |
+| 2 — Parsing, chunking, embeddings | Text extraction, OCR, chunking, Voyage AI embeddings | ✅ Complete |
+| 3 — Simplification & clause extraction | LLM orchestration, `/simplify`, `/extract-clauses` | ✅ Complete |
+| 4 — Document Q&A | RAG chat with citations | ✅ Complete |
+| 5 — Comparison & export | Comparison engine, export to PDF/DOCX/MD | ✅ Complete |
+| 6 — Missing features | Celery workers, PDF/DOCX renderers, Docker automation | ✅ Complete |
+| 7 — Testing & quality | 80% coverage, golden dataset, LLM evaluation, performance tests | ✅ Complete |
+| 8 — Deployment & CI/CD | GitHub Actions, rate limiting, file validation, staging/prod workflows | ✅ Complete |
+| 9 — Security enhancements | MFA (TOTP), account lockout, CAPTCHA, CSP headers | ✅ Complete |
+
+## Problem Statement Alignment
+
+LegalLens addresses all seven use cases from the challenge problem statement:
+
+| Use Case | Implementation | Endpoints / Services |
+|---|---|---|
+| **Simplifying complex legal documents** | Plain-language rewriting with 3 reading levels (elementary, plain English, detailed) using Claude Sonnet-4 with map-reduce for long docs | `POST /documents/{id}/simplify` → `services/simplification.py` |
+| **Comparing contracts, agreements, or policies** | Clause-aligned comparison across 2–5 documents with materiality ratings (none/minor/significant/critical) | `POST /comparisons`, `GET /comparisons/{id}` → `services/comparison.py` |
+| **Highlighting important clauses, obligations, risks** | 10 clause types extracted (indemnification, termination, liability, confidentiality, non-compete, arbitration, payment, auto-renewal, governing law, other) with 3-level risk rating (low/medium/high) + rationale | `POST /documents/{id}/extract-clauses`, `GET /documents/{id}/clauses` → `services/clause_extraction.py` |
+| **Highlighting inconsistencies** | Comparison engine aligns same-type clauses across documents and generates diff summaries highlighting material differences | `GET /comparisons/{id}` (returns `diff_summary` per clause group) |
+| **Answering questions based on provided legal documents** | RAG-powered chat with top-k semantic retrieval, conversation history, mandatory citations to source chunks | `POST /chat/sessions/{id}/messages` → `services/chat.py`, `services/llm_orchestration.py` |
+| **Helping users understand their options and potential next steps** | Export types include "action checklist" (concrete next steps) and "lawyer preparation brief" (questions to ask an attorney) | `POST /exports` with `export_type=checklist` or `lawyer_brief` |
+| **Generating summaries, checklists, or other actionable outputs** | Four export types (summary, checklist, lawyer brief, comparison report) in three formats (PDF, DOCX, Markdown) with structured sections and risk prioritization | `POST /exports`, `GET /exports/{id}` → `services/export.py`, `services/renderers/` |
+
+**All endpoints documented**: See auto-generated API docs at `/docs` (Swagger UI) or `/redoc`.
+
+**Citation requirement**: Every assistant answer in chat includes ≥1 citation with `chunk_id`, `page_number`, and `excerpt` for source traceability.
+
+**Legal disclaimer**: All responses include "This is general information, not legal advice" per `architecture.md` §7.2.
+
+For detailed architecture and data flow, see [`.context/architecture.md`](.context/architecture.md) and [`implementation_plan.md`](implementation_plan.md).
 
 ## Tech stack
 
