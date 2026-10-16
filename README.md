@@ -6,6 +6,20 @@ GenAI-powered web application that helps non-lawyers understand, compare, and ac
 
 ---
 
+## Problem statement alignment
+
+Built for the **AI for Legal Assistance & Access** theme: *"helping users understand, compare, and navigate legal documents and information."*
+
+| Challenge use case | LegalLens delivers | Where |
+|---|---|---|
+| Simplifying complex legal documents | 3 reading levels (elementary / plain-English / detailed); map-reduce for long docs | `POST /documents/{id}/simplify` → `app/services/simplification.py` |
+| Comparing contracts, agreements, or policies | Clause-aligned diff across 2–5 docs, materiality rating (none → critical) | `POST /comparisons` → `app/services/comparison.py` |
+| Highlighting clauses, obligations, risks, inconsistencies | 10 clause types × 3 risk levels with rationale | `POST /documents/{id}/extract-clauses` → `app/services/clause_extraction.py` |
+| Answering questions based on provided documents | RAG chat, top-8 retrieval, every answer carries ≥1 resolvable citation | `POST /chat/sessions/{id}/messages` → `app/services/chat.py` |
+| Understanding options and next steps | Action checklist export, ranked by risk | `POST /exports` (type=`checklist`) |
+| Summaries, checklists, actionable outputs | Summary / checklist / lawyer-brief / comparison-report, each as PDF, DOCX, or Markdown | `app/services/export.py` + `app/services/renderers/` |
+| Preparing info/questions for a legal professional | Standalone lawyer-prep brief generator (not a referral mechanism, by design) | `_generate_lawyer_brief_md()` in `export.py` |
+
 ## What it does (MVP)
 
 | Capability | Detail |
@@ -91,7 +105,7 @@ legallens/
 └── README.md
 ```
 
-See [`.context/architecture.md`](.context/architecture.md) for the full system design.
+See [`.context/architecture.md`](.context/architecture.md) for the full system design and [`implementation_plan.md`](implementation_plan.md) for the phase-by-phase build record.
 
 ## Implementation phases
 
@@ -103,6 +117,7 @@ See [`.context/architecture.md`](.context/architecture.md) for the full system d
 | 3 — Simplification & clause extraction | LLM orchestration, `/simplify`, `/extract-clauses` | ✅ Complete |
 | 4 — Document Q&A | RAG chat with citations | ✅ Complete |
 | 5 — Comparison & export | Comparison engine, export to PDF/DOCX/MD | ✅ Complete |
+<<<<<<< HEAD
 | 6 — Missing features | Celery workers, PDF/DOCX renderers, Docker automation | ✅ Complete |
 | 7 — Testing & quality | 80% coverage, golden dataset, LLM evaluation, performance tests | ✅ Complete |
 | 8 — Deployment & CI/CD | GitHub Actions, rate limiting, file validation, staging/prod workflows | ✅ Complete |
@@ -149,11 +164,3 @@ For detailed architecture and data flow, see [`.context/architecture.md`](.conte
 - JWT access tokens expire in 15 minutes; refresh tokens in 14 days
 - Every document upload, export, deletion, and LLM call writes an immutable audit log row
 - `audit_logs` table has **no UPDATE/DELETE grant** at the DB role level
-
-## Open questions (not yet resolved — see `.context/progress-tracker.md`)
-
-- Which jurisdiction(s) to target for clause heuristics at launch?
-- Final data retention policy (30-day placeholder is unconfirmed)
-- Malware scan: synchronous block vs. async quarantine?
-- Pre-send PII redaction before content reaches Anthropic/Voyage AI?
-- **UI design system**: no brand tokens defined — current colors are placeholders
